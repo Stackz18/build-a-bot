@@ -53,10 +53,10 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import { toCurrency } from '@/shared/formatters';
+import { computed } from 'vue';
 import parts from '../data/parts';
-import createdHook from './created-hook-mixin';
 
 function getNextValidIndex(index, length) {
   const incrementedIndex = index + 1;
@@ -68,117 +68,106 @@ function getPreviousValidIndex(index, length) {
   return deprecatedIndex < 0 ? length - 1 : deprecatedIndex;
 }
 
-export default {
+const availableParts = parts;
+let headIndex = 0;
+let leftArmIndex = 0;
+let torsoIndex = 0;
+let rightArmIndex = 0;
+let baseIndex = 0;
+const cart = [];
 
-  name: 'RobotBuilder',
-  mixins: [createdHook],
-  data() {
-    return {
-      availableParts: parts,
-      headIndex: 0,
-      leftArmIndex: 0,
-      torsoIndex: 0,
-      rightArmIndex: 0,
-      baseIndex: 0,
-      cart: [],
-    };
-  },
-  computed: {
-    selectedRobot() {
-      return {
-        head: this.availableParts.heads[this.headIndex],
-        leftArm: this.availableParts.arms[this.leftArmIndex],
-        torso: this.availableParts.torsos[this.torsoIndex],
-        rightArm: this.availableParts.arms[this.rightArmIndex],
-        base: this.availableParts.bases[this.baseIndex],
-      };
-    },
-  },
-  methods: {
-    addToCart() {
-      const robot = this.selectedRobot;
-      const cost = robot.head.cost +
+const selectedRobot = computed(() => ({
+  head: availableParts.heads[headIndex],
+  leftArm: availableParts.arms[leftArmIndex],
+  torso: availableParts.torsos[torsoIndex],
+  rightArm: availableParts.arms[rightArmIndex],
+  base: availableParts.bases[baseIndex],
+}));
+
+const addToCart = () => {
+  const robot = selectedRobot;
+  const cost = robot.head.cost +
         robot.leftArm.cost +
         robot.torso.cost +
         robot.rightArm.cost +
         robot.base.cost;
-      this.cart.push({ ...robot, cost });
-      console.log(this.cart.length);
-    },
-    selectNextHead() {
-      this.headIndex = getNextValidIndex(
-        this.headIndex,
-        this.availableParts.heads.length,
-      );
-    },
-
-    selectPreviousHead() {
-      this.headIndex = getPreviousValidIndex(
-        this.headIndex,
-        this.availableParts.heads.length,
-      );
-    },
-
-    selectNextLeftArm() {
-      this.leftArmIndex = getNextValidIndex(
-        this.leftArmIndex,
-        this.availableParts.arms.length,
-      );
-    },
-
-    selectPreviousLeftArm() {
-      this.leftArmIndex = getPreviousValidIndex(
-        this.leftArmIndex,
-        this.availableParts.arms.length,
-      );
-    },
-
-    selectNextTorso() {
-      this.torsoIndex = getNextValidIndex(
-        this.torsoIndex,
-        this.availableParts.torsos.length,
-      );
-    },
-
-    selectPreviousTorso() {
-      this.torsoIndex = getPreviousValidIndex(
-        this.torsoIndex,
-        this.availableParts.torsos.length,
-      );
-    },
-
-    selectNextRightArm() {
-      this.rightArmIndex = getNextValidIndex(
-        this.rightArmIndex,
-        this.availableParts.arms.length,
-      );
-    },
-
-    selectPreviousRightArm() {
-      this.rightArmIndex = getPreviousValidIndex(
-        this.rightArmIndex,
-        this.availableParts.arms.length,
-      );
-    },
-
-    selectNextBase() {
-      this.baseIndex = getNextValidIndex(
-        this.baseIndex,
-        this.availableParts.bases.length,
-      );
-    },
-
-    selectPreviousBase() {
-      this.baseIndex = getPreviousValidIndex(
-        this.baseIndex,
-        this.availableParts.bases.length,
-      );
-    },
-
-    toCurrency,
-
-  },
+  cart.push({ ...robot, cost });
+  console.log(cart.length);
 };
+
+// #region Part Selector Methods
+
+const selectNextHead = () => {
+  headIndex = getNextValidIndex(
+    headIndex,
+    availableParts.heads.length,
+  );
+};
+
+const selectPreviousHead = () => {
+  headIndex = getPreviousValidIndex(
+    headIndex,
+    availableParts.heads.length,
+  );
+};
+
+const selectNextLeftArm = () => {
+  leftArmIndex = getNextValidIndex(
+    leftArmIndex,
+    availableParts.arms.length,
+  );
+};
+
+const selectPreviousLeftArm = () => {
+  leftArmIndex = getPreviousValidIndex(
+    leftArmIndex,
+    availableParts.arms.length,
+  );
+};
+
+const selectNextTorso = () => {
+  torsoIndex = getNextValidIndex(
+    torsoIndex,
+    availableParts.torsos.length,
+  );
+};
+
+const selectPreviousTorso = () => {
+  torsoIndex = getPreviousValidIndex(
+    torsoIndex,
+    availableParts.torsos.length,
+  );
+};
+
+const selectNextRightArm = () => {
+  rightArmIndex = getNextValidIndex(
+    rightArmIndex,
+    availableParts.arms.length,
+  );
+};
+
+const selectPreviousRightArm = () => {
+  rightArmIndex = getPreviousValidIndex(
+    rightArmIndex,
+    availableParts.arms.length,
+  );
+};
+
+const selectNextBase = () => {
+  baseIndex = getNextValidIndex(
+    baseIndex,
+    availableParts.bases.length,
+  );
+};
+
+const selectPreviousBase = () => {
+  baseIndex = getPreviousValidIndex(
+    baseIndex,
+    availableParts.bases.length,
+  );
+};
+
+// #endregion
 
 </script>
 
@@ -314,7 +303,8 @@ export default {
     font-size: 16px;
 }
 
-td, th {
+td,
+th {
     text-align: left;
     padding: 5px;
     padding-right: 20px;
