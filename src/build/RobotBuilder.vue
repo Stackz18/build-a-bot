@@ -2,7 +2,7 @@
     <div class="content">
         <button class="add-to-cart" @click="addToCart()">Add to Cart</button>
         <div class="top-row">
-            <div class="top part" :style="headBorderStyle">
+            <div class="top part">
                 <div class="robot-name">{{ selectedRobot.head.title }}
                     <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
                 </div>
@@ -86,7 +86,7 @@ const selectedRobot = computed(() => ({
   base: availableParts.bases[baseIndex.value],
 }));
 
-const headBorderStyle = computed(() => ({ border: selectedRobot.value.head.onSale ? '3px solid red' : '3px solid #aaa' }));
+const headBorderColor = computed(() => (selectedRobot.value.head.onSale ? 'red' : '#aaa'));
 
 const addToCart = () => {
   const robot = selectedRobot.value;
@@ -175,16 +175,20 @@ const selectPreviousBase = () => {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .part {
     position: relative;
     width: 200px;
     height: 200px;
     border: 3px solid #aaa;
-}
 
-.part img {
-    width: 200px;
+    &.top {
+        border: 3px solid v-bind(headBorderColor);
+    }
+
+    img {
+        width: 200px;
+    }
 }
 
 .top-row {
@@ -209,18 +213,49 @@ const selectPreviousBase = () => {
 
 .left {
     border-right: none;
+
+    .next-selector {
+        top: auto;
+        bottom: -28px;
+        left: -3px;
+        width: 179px;
+        height: 25px;
+    }
+
+    .prev-selector {
+        top: -28px;
+        left: -3px;
+        width: 179px;
+        height: 25px;
+    }
+
+    img {
+        transform: rotate(-90deg);
+    }
 }
 
 .right {
     border-left: none;
-}
 
-.left img {
-    transform: rotate(-90deg);
-}
+    .prev-selector {
+        top: -28px;
+        left: 24px;
+        width: 179px;
+        height: 25px;
+    }
 
-.right img {
-    transform: rotate(90deg);
+    .next-selector {
+        top: auto;
+        bottom: -28px;
+        left: 24px;
+        width: 179px;
+        height: 25px;
+        right: -3px;
+    }
+
+    img {
+        transform: rotate(90deg);
+    }
 }
 
 .bottom {
@@ -245,43 +280,12 @@ const selectPreviousBase = () => {
     height: 206px;
 }
 
-.center .prev-selector,
-.center .next-selector {
-    opacity: 0.8;
-}
+.center {
 
-.left .prev-selector {
-    top: -28px;
-    left: -3px;
-    width: 179px;
-    height: 25px;
-}
-
-.left .next-selector {
-    top: auto;
-    bottom: -28px;
-    left: -3px;
-    width: 179px;
-    height: 25px;
-}
-
-.right .prev-selector {
-    top: -28px;
-    left: 24px;
-    width: 179px;
-    height: 25px;
-}
-
-.right .next-selector {
-    top: auto;
-    bottom: -28px;
-    left: 24px;
-    width: 179px;
-    height: 25px;
-}
-
-.right .next-selector {
-    right: -3px;
+    .prev-selector,
+    .next-selector {
+        opacity: 0.8;
+    }
 }
 
 .robot-name {
