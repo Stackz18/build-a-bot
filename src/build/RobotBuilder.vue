@@ -5,15 +5,20 @@
             <div class="robot-name">{{ selectedRobot.head.title }}
                 <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
             </div>
-            <PartSelector />
+            <PartSelector :parts="availableParts.heads" position="top" @parts-selected="part =>
+            selectedRobot.head = part"/>
         </div>
         <div class="middle-row">
-            <PartSelector />
-            <PartSelector />
-            <PartSelector />
+            <PartSelector :parts="availableParts.arms" position="left" @parts-selected="part =>
+            selectedRobot.leftArm = part"/>
+            <PartSelector :parts="availableParts.torsos" position="center" @parts-selected="part =>
+            selectedRobot.torso = part"/>
+            <PartSelector :parts="availableParts.arms" position="right" @parts-selected="part =>
+            selectedRobot.rightArm = part"/>
         </div>
         <div class="bottom-row">
-            <PartSelector />
+            <PartSelector :parts="availableParts.bases" position="bottom" @parts-selected="part =>
+            selectedRobot.base = part"/>
         </div>
     </div>
     <div>
@@ -37,9 +42,9 @@
 import { computed, ref, onMounted } from 'vue';
 import { toCurrency } from '@/shared/formatters';
 import PartSelector from './PartSelector.vue';
-// import parts from '../data/parts';
+import parts from '../data/parts';
 
-// const availableParts = parts;
+const availableParts = parts;
 const cart = ref([]);
 
 onMounted(() => console.log('On Mounted'));
@@ -105,21 +110,6 @@ const addToCart = () => {
 .left {
     border-right: none;
 
-    .next-selector {
-        top: auto;
-        bottom: -28px;
-        left: -3px;
-        width: 179px;
-        height: 25px;
-    }
-
-    .prev-selector {
-        top: -28px;
-        left: -3px;
-        width: 179px;
-        height: 25px;
-    }
-
     img {
         transform: rotate(-90deg);
     }
@@ -128,22 +118,6 @@ const addToCart = () => {
 .right {
     border-left: none;
 
-    .prev-selector {
-        top: -28px;
-        left: 24px;
-        width: 179px;
-        height: 25px;
-    }
-
-    .next-selector {
-        top: auto;
-        bottom: -28px;
-        left: 24px;
-        width: 179px;
-        height: 25px;
-        right: -3px;
-    }
-
     img {
         transform: rotate(90deg);
     }
@@ -151,32 +125,6 @@ const addToCart = () => {
 
 .bottom {
     border-top: none;
-}
-
-.prev-selector {
-    position: absolute;
-    z-index: 1;
-    top: -3px;
-    left: -28px;
-    width: 25px;
-    height: 206px;
-}
-
-.next-selector {
-    position: absolute;
-    z-index: 1;
-    top: -3px;
-    right: -28px;
-    width: 25px;
-    height: 206px;
-}
-
-.center {
-
-    .prev-selector,
-    .next-selector {
-        opacity: 0.8;
-    }
 }
 
 .robot-name {
