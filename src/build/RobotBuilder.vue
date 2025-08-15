@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="content" v-if="partsStore.parts">
         <div class="preview">
             <CollapsibleSection>
                 <template v-slot:collapse>&#x25B2; Hide</template>
@@ -24,49 +24,35 @@
             <div class="robot-name">{{ selectedRobot.head.title }}
                 <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
             </div>
-            <PartSelector :parts="availableParts.heads" position="top" @parts-selected="part =>
+            <PartSelector :parts="partsStore.parts.heads" position="top" @parts-selected="part =>
                 selectedRobot.head = part" />
         </div>
         <div class="middle-row">
-            <PartSelector :parts="availableParts.arms" position="left" @parts-selected="part =>
+            <PartSelector :parts="partsStore.parts.arms" position="left" @parts-selected="part =>
                 selectedRobot.leftArm = part" />
-            <PartSelector :parts="availableParts.torsos" position="center" @parts-selected="part =>
-                selectedRobot.torso = part" />
-            <PartSelector :parts="availableParts.arms" position="right" @parts-selected="part =>
+            <PartSelector :parts="partsStore.parts.torsos" position="center"
+            @parts-selected="part => selectedRobot.torso = part" />
+            <PartSelector :parts="partsStore.parts.arms" position="right" @parts-selected="part =>
                 selectedRobot.rightArm = part" />
         </div>
         <div class="bottom-row">
-            <PartSelector :parts="availableParts.bases" position="bottom" @parts-selected="part =>
+            <PartSelector :parts="partsStore.parts.bases" position="bottom" @parts-selected="part =>
                 selectedRobot.base = part" />
         </div>
-    </div>
-    <div>
-        <h1>Cart</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Robot</th>
-                    <th class="cost">Cost</th>
-                </tr>
-            </thead>
-            <tr v-for="(robot, index) in cartStore.cart" :key="index">
-                <td>{{ robot.head.title }}</td>
-                <td class="cost">{{ toCurrency(robot.cost) }}</td>
-            </tr>
-        </table>
     </div>
 </template>
 
 <script setup>
     import { computed, ref, onMounted } from 'vue';
-    import { toCurrency } from '@/shared/formatters';
     import CollapsibleSection from '@/shared/CollapsibleSection.vue';
     import { useCartStore } from '@/stores/cartStore';
+    import { storeToRefs } from 'pinia';
+    import { usePartStore } from '@/stores/partsStore';
     import PartSelector from './PartSelector.vue';
-    import parts from '../data/parts';
 
-    const availableParts = parts;
-    const cartStore = useCartStore();
+    const partsStore = usePartStore();
+    partsStore.getparts();
+    const { cart } = storeToRefs(useCartStore());
 
     onMounted(() => console.log('On Mounted'));
 
@@ -87,7 +73,7 @@
             robot.torso.cost +
             robot.rightArm.cost +
             robot.base.cost;
-        cartStore.cart.push({ ...robot, cost });
+        cart.value.push({ ...robot, cost });
     };
 </script>
 
