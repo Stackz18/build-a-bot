@@ -17,5 +17,6 @@ module.exports = {
     'linebreak-style': 0,
     'operator-linebreak': 0,
     indent: 'off',
+    'import/prefer-default-export': 'off',
   },
 };
